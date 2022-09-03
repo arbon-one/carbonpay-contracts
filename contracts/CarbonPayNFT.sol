@@ -24,7 +24,7 @@ contract CarbonPayNFT is ERC721, AccessControl {
         uint256 offset;
     }
 
-    Counters.Counter private _tokenIdCounter;
+    Counters.Counter private tokenIdCounter;
 
     constructor() ERC721("CarbonPayNFT", "CPNFT") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -33,11 +33,34 @@ contract CarbonPayNFT is ERC721, AccessControl {
 
     function safeMint(address to, string memory _name, uint256 _offset) public onlyRole(MINTER_ROLE) {
         require(tokenNames[_name] != true, "The name is already taken. Please use a different name");
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        tokenIdCounter.increment();
+        uint256 tokenId = tokenIdCounter.current();
         _safeMint(to, tokenId);
         tokenNames[_name] = true;
-        attributes[tokenId] = Attr(_name, _offset);
+        attributes[tokenIdCounter.current()] = Attr(_name, _offset);
+    }
+
+    function getTokenIdByAddress(address _merchant) public view returns(uint256) {
+        require(uint256(balanceOf(_merchant)) > 0, 'Not enabled for the give address.');
+
+        uint256 i = 0;
+        uint256 totalSupply = tokenIdCounter.current();
+
+        while (i < totalSupply) {
+            if (!_exists(i) && i <= totalSupply) {
+                continue;
+            }
+
+            address currentTokenOwner = ownerOf(i);
+
+            if (currentTokenOwner == _merchant) {
+                return i;
+            }
+
+            i ++;
+        }
+
+        return i;
     }
 
     function getImage () private pure returns (string memory) {
@@ -58,8 +81,10 @@ contract CarbonPayNFT is ERC721, AccessControl {
         return string(abi.encodePacked('data:application/json;base64,', json));
     }
 
-    function updateOffset(uint256 tokenId, uint256 offset) external onlyRole(OFFSET_MODIFIER_ROLE) {
-        attributes[tokenId].offset += offset;
+    function updateOffset(address _merchant, uint256 _offset) external onlyRole(OFFSET_MODIFIER_ROLE) returns(bool) {
+        uint256 tokenId = getTokenIdByAddress(_merchant);
+        attributes[tokenId].offset += _offset;
+        return true;
     }
 
     function updateInfo(uint256 tokenId, string memory _name) external onlyRole(INFO_MODIFIER_ROLE) {
