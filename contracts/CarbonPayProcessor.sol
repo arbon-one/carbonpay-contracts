@@ -44,7 +44,7 @@ contract CarbonPayProcessor is AccessControl {
     }
 
     function pay(address merchant, address token) public payable {
-        // require(allowedTokens[token], "Token is not allowed.");
+        require(allowedTokens[token], "Token is not allowed.");
         
         purge();
         updateOffset(merchant, msg.value);
