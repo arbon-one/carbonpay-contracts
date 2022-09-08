@@ -31,23 +31,24 @@ contract CarbonPayNFT is ERC721, AccessControl {
         _grantRole(MINTER_ROLE, msg.sender);
     }
 
-    function safeMint(address to, string memory _name, uint256 _offset) public onlyRole(MINTER_ROLE) {
+    function safeMint(address to, string memory _name) public onlyRole(MINTER_ROLE) {
         require(tokenNames[_name] != true, "The name is already taken. Please use a different name");
         tokenIdCounter.increment();
         uint256 tokenId = tokenIdCounter.current();
         _safeMint(to, tokenId);
         tokenNames[_name] = true;
-        attributes[tokenIdCounter.current()] = Attr(_name, _offset);
+        attributes[tokenIdCounter.current()] = Attr(_name, 0);
     }
 
     function getTokenIdByAddress(address _merchant) public view returns(uint256) {
         require(uint256(balanceOf(_merchant)) > 0, 'Not enabled for the give address.');
 
         uint256 i = 0;
-        uint256 totalSupply = tokenIdCounter.current();
+        uint256 supply = tokenIdCounter.current();
 
-        while (i < totalSupply) {
-            if (!_exists(i) && i <= totalSupply) {
+        while (i <= supply) {
+            if (!_exists(i) && i <= supply) {
+                i ++;
                 continue;
             }
 
@@ -61,6 +62,10 @@ contract CarbonPayNFT is ERC721, AccessControl {
         }
 
         return i;
+    }
+
+    function totalSupply() public view returns(uint256) {
+        return tokenIdCounter.current();
     }
 
     function getImage () private pure returns (string memory) {
