@@ -59,6 +59,46 @@ describe('CarbonNFT', function () {
     });
   });
 
+  describe('Metadata', function () {
+    it('OFFSET_MODIFIER_ROLE should correctly update offset', async function () {
+      const { carbonNFT, owner } = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, 'Merchant Name 1');
+      await carbonNFT.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('OFFSET_MODIFIER_ROLE')), owner.address);
+      await carbonNFT.updateOffset(owner.address, 100)
+      expect((await carbonNFT.attributes(1)).offset).to.eq(100);
+    })
+
+    it('Non-OFFSET_MODIFIER_ROLE should NOT be able to update offset', async function () {
+      const { carbonNFT, owner } = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, 'Merchant Name 1');
+      await expect(carbonNFT.updateOffset(owner.address, 100)).to.be.reverted;
+    })
+
+    it('DEFAULT_ADMIN_ROLE should correctly update info', async function () {
+      const { carbonNFT, owner } = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, 'Merchant Name 1');
+      await carbonNFT.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('DEFAULT_ADMIN_ROLE')), owner.address);
+      await carbonNFT.updateInfo(1, 'Other Merchant Name')
+      expect((await carbonNFT.attributes(1)).name).to.eq('Other Merchant Name');
+    })
+
+    it('Non-DEFAULT_ADMIN_ROLE should NOT be able to update info', async function () {
+      const { carbonNFT, owner, otherAccount } = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, 'Merchant Name 1');
+      await expect(carbonNFT.connect(otherAccount).updateInfo(1, 'Other Merchant Name')).to.be.reverted;
+    })
+
+    it('Should return correct tokenURI', async function () {
+      const { carbonNFT, owner} = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, 'Merchant Name 1');
+      await carbonNFT.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('OFFSET_MODIFIER_ROLE')), owner.address);
+      await carbonNFT.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('DEFAULT_ADMIN_ROLE')), owner.address);
+      await carbonNFT.updateOffset(owner.address, 100);
+      await carbonNFT.updateInfo(1, 'Other Merchant Name')
+      expect(await carbonNFT.tokenURI(1)).to.eq('data:application/json;base64,eyJuYW1lIjogIk90aGVyIE1lcmNoYW50IE5hbWUiLCJpbWFnZV9kYXRhIjogIjEiLCJhdHRyaWJ1dGVzIjogW3sidHJhaXRfdHlwZSI6ICJvZmZzZXQiLCAidmFsdWUiOiAxMDB9LF19');
+    });
+  });
+
   // describe('tokenUri', function () {
   //   it('Should return correct metadata for UArdian token', async function () {
   //     const { uardiansFam, owner } = await loadFixture(deployFixture);

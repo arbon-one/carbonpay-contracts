@@ -68,8 +68,8 @@ contract CarbonPayNFT is ERC721, AccessControl {
         return tokenIdCounter.current();
     }
 
-    function getImage () private pure returns (string memory) {
-        return 'https://scontent-lhr8-1.xx.fbcdn.net/v/t39.30808-6/297521403_3251244181863135_3280964840166953473_n.jpg?stp=dst-jpg_s1080x2048&_nc_cat=100&ccb=1-7&_nc_sid=5b7eaf&_nc_ohc=L_yTaePIw5gAX9GyqpK&_nc_ht=scontent-lhr8-1.xx&oh=00_AT9hhmqSnd8ACkOqDtuU8-q52xpZcA9k-4lMEVRSLLKJAQ&oe=62F21C40';
+    function getImage (uint256 tokenId) private pure returns (string memory) {
+        return Strings.toString(tokenId);
     }
 
     function tokenURI(uint256 tokenId) override(ERC721) public view returns (string memory) {
@@ -77,8 +77,8 @@ contract CarbonPayNFT is ERC721, AccessControl {
             bytes(string(
                 abi.encodePacked(
                     '{"name": "', attributes[tokenId].name, '",',
-                    '"image_data": "', getImage(), '",',
-                    '"attributes": [{"trait_type": "Speed", "value": ', Strings.toString(attributes[tokenId].offset), '},',
+                    '"image_data": "', getImage(tokenId), '",',
+                    '"attributes": [{"trait_type": "offset", "value": ', Strings.toString(attributes[tokenId].offset), '},',
                     ']}'
                 )
             ))
@@ -86,13 +86,12 @@ contract CarbonPayNFT is ERC721, AccessControl {
         return string(abi.encodePacked('data:application/json;base64,', json));
     }
 
-    function updateOffset(address _merchant, uint256 _offset) external onlyRole(OFFSET_MODIFIER_ROLE) returns(bool) {
-        uint256 tokenId = getTokenIdByAddress(_merchant);
+    function updateOffset(address merchant, uint256 _offset) external onlyRole(OFFSET_MODIFIER_ROLE) {
+        uint256 tokenId = getTokenIdByAddress(merchant);
         attributes[tokenId].offset += _offset;
-        return true;
     }
 
-    function updateInfo(uint256 tokenId, string memory _name) external onlyRole(INFO_MODIFIER_ROLE) {
+    function updateInfo(uint256 tokenId, string memory _name) external onlyRole(DEFAULT_ADMIN_ROLE) {
         attributes[tokenId].name = _name;
     }
 
