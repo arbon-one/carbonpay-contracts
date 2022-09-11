@@ -14,14 +14,11 @@ describe('CarbonNFT', function () {
     const [owner, otherAccount] = await ethers.getSigners();
 
     const Token = await ethers.getContractFactory('CarbonToken');
-    const Burner = await ethers.getContractFactory('CarbonBurner');
     const NFT = await ethers.getContractFactory('CarbonPayNFT');
     const Pay = await ethers.getContractFactory('CarbonPayProcessor');
-    const burner = await Burner.deploy();
     const token = await Token.deploy();
     const nft = await NFT.deploy();
     const pay = await Pay.deploy(
-      burner.address,
       nft.address
     );
     return { token, pay, nft, owner, otherAccount };

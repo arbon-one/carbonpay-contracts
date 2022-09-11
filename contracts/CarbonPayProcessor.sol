@@ -16,15 +16,12 @@ interface IToken {
 }
 
 contract CarbonPayProcessor is AccessControl {
-    address burnContractAddress;
     address nftContractAddress;
     mapping(address => bool) public allowedTokens;
 
     constructor(
-        address _burnContractAddress,
         address _nftContractAddress
     ) {
-        burnContractAddress = _burnContractAddress;
         nftContractAddress = _nftContractAddress;
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
