@@ -88,7 +88,7 @@ contract CarbonPayNFT is ERC721, AccessControl {
 
     function updateOffset(address merchant, uint256 _offset) external onlyRole(OFFSET_MODIFIER_ROLE) {
         uint256 tokenId = getTokenIdByAddress(merchant);
-        attributes[tokenId].offset += _offset;
+        attributes[tokenId].offset += (_offset / (1 * 10 ** 18));
     }
 
     function updateInfo(uint256 tokenId, string memory _name) external onlyRole(DEFAULT_ADMIN_ROLE) {
