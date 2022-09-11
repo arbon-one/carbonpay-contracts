@@ -7,22 +7,23 @@
 const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  const Token = await hre.ethers.getContractFactory("CarbonToken");
+  const NFT = await hre.ethers.getContractFactory("CarbonPayNFT");
+  const Pay = await hre.ethers.getContractFactory("CarbonPayProcessor");
+  const token = await Token.deploy();
+  await token.deployed();
+  const nft = await NFT.deploy();
+  await nft.deployed();
+  const pay = await Pay.deploy(
+    nft.address
+  );
+  await pay.deployed();
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
-
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-  await lock.deployed();
-
-  console.log("Lock with 1 ETH deployed to:", lock.address);
+  console.log('CarbonToken: ', token.address);
+  console.log('CarbonPayNFT: ', nft.address);
+  console.log('CarbonPay: ', pay.address);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;

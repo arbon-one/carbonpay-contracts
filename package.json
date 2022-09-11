@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "REPORT_GAS=true npx hardhat test",
-    "start-node": "npx hardhat node"
+    "start-node": "npx hardhat node",
+    "compile": "npx hardhat compile",
+    "deploy-testnet": "npx hardhat run --network alfajores scripts/deploy.js"
   },
   "keywords": [],
   "author": "",
