@@ -9,7 +9,7 @@ module.exports = {
     },
     alfajores: {
       url: "https://alfajores-forno.celo-testnet.org",
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: ['b689f784db9b1f18e0bc27f7d00dc31a4573940a6a07048ead6317d0b1beab5e'],
       chainId: 44787,
    },
   }

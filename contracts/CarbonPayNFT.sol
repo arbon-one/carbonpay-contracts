@@ -12,7 +12,6 @@ import "./Base64.sol";
 contract CarbonPayNFT is ERC721, AccessControl {
     using Counters for Counters.Counter;
 
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant OFFSET_MODIFIER_ROLE = keccak256("OFFSET_MODIFIER_ROLE");
     bytes32 public constant INFO_MODIFIER_ROLE = keccak256("INFO_MODIFIER_ROLE");
 
@@ -28,16 +27,16 @@ contract CarbonPayNFT is ERC721, AccessControl {
 
     constructor() ERC721("CarbonPayNFT", "CPNFT") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(MINTER_ROLE, msg.sender);
     }
 
-    function safeMint(address to, string memory _name) public onlyRole(MINTER_ROLE) {
+    function safeMint(address merchant, string memory _name) public {
         require(tokenNames[_name] != true, "The name is already taken. Please use a different name");
+        require(balanceOf(merchant) == 0, "Address is already registered.");
         tokenIdCounter.increment();
         uint256 tokenId = tokenIdCounter.current();
-        _safeMint(to, tokenId);
+        _safeMint(merchant, tokenId);
         tokenNames[_name] = true;
-        attributes[tokenIdCounter.current()] = Attr(_name, 0);
+        attributes[tokenId] = Attr(_name, 0);
     }
 
     function getTokenIdByAddress(address _merchant) public view returns(uint256) {

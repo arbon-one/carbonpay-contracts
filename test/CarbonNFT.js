@@ -18,24 +18,19 @@ describe('CarbonNFT', function () {
     return { carbonNFT, owner, otherAccount };
   }
 
-  describe('Deployment', function () {
-    it('Should set MINTER_ROLE', async function () {
-      const { carbonNFT, owner } = await loadFixture(deployFixture);
-      const isAdmin = await carbonNFT.hasRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('MINTER_ROLE')), owner.address);
-      expect(isAdmin).to.equal(true);
-    });
-  });
-
   describe('Mint', function () {
-    it('MINTER_ROLE allowed to mint', async function () {
-      const { carbonNFT, owner } = await loadFixture(deployFixture);
-      await carbonNFT.safeMint(owner.address, 'Merchant Name');
+    it('Anyone should be able to mint', async function () {
+      const { carbonNFT, owner, otherAccount } = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, `Merchant Name #${Math.random() * 10000}`);
+      await carbonNFT.connect(otherAccount).safeMint(otherAccount.address, `Merchant Name #${Math.random() * 10000}`);
       expect(await carbonNFT.balanceOf(owner.address)).to.eq(1);
+      expect(await carbonNFT.balanceOf(otherAccount.address)).to.eq(1);
     });
 
-    it('Non-MINTER_ROLE is NOT allowed to mint', async function () {
-      const { carbonNFT, otherAccount } = await loadFixture(deployFixture);
-      await expect(carbonNFT.connect(otherAccount).safeMint(otherAccount.address, 'Merchant Name')).to.be.reverted;
+    it('Should be able to mint only one per address', async function () {
+      const { carbonNFT, owner, otherAccount } = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, `Merchant Name #${Math.random() * 10000}`);
+      await expect(carbonNFT.safeMint(owner.address, `Merchant Name #${Math.random() * 10000}`)).to.revertedWith('Address is already registered.');
     });
 
     it('Token IDs start with 1', async function () {
