@@ -67,8 +67,8 @@ contract CarbonPayNFT is ERC721, AccessControl {
         return tokenIdCounter.current();
     }
 
-    function getImage (uint256 tokenId) private pure returns (string memory) {
-        return Strings.toString(tokenId);
+    function getImage () private pure returns (string memory) {
+        return 'ipfs://bafybeiaoussqp75ohgcwsa7322etzpr4wx3joj6tiuhkd733uagurx2nxy';
     }
 
     function tokenURI(uint256 tokenId) override(ERC721) public view returns (string memory) {
@@ -76,7 +76,7 @@ contract CarbonPayNFT is ERC721, AccessControl {
             bytes(string(
                 abi.encodePacked(
                     '{"name": "', attributes[tokenId].name, '",',
-                    '"image_data": "', getImage(tokenId), '",',
+                    '"image_data": "', getImage(), '",',
                     '"attributes": [{"trait_type": "offset", "value": ', Strings.toString(attributes[tokenId].offset), '},',
                     ']}'
                 )
