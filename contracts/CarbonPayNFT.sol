@@ -7,9 +7,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "./Base64.sol";
 
-contract CarbonPayNFT is ERC721, AccessControl {
+contract CarbonPayNFT is ERC721, AccessControl, ERC721Burnable {
     using Counters for Counters.Counter;
 
     bytes32 public constant OFFSET_MODIFIER_ROLE = keccak256("OFFSET_MODIFIER_ROLE");
@@ -77,7 +78,7 @@ contract CarbonPayNFT is ERC721, AccessControl {
                 abi.encodePacked(
                     '{"name": "', attributes[tokenId].name, '",',
                     '"image_data": "', getImage(), '",',
-                    '"attributes": [{"trait_type": "offset", "value": ', Strings.toString(attributes[tokenId].offset), '},',
+                    '"attributes": [{"trait_type": "offset", "value": ', Strings.toString(attributes[tokenId].offset), '}',
                     ']}'
                 )
             ))

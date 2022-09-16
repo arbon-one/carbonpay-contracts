@@ -89,8 +89,8 @@ describe('CarbonNFT', function () {
       await carbonNFT.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('OFFSET_MODIFIER_ROLE')), owner.address);
       await carbonNFT.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('DEFAULT_ADMIN_ROLE')), owner.address);
       await carbonNFT.updateOffset(owner.address, ethers.utils.parseEther('100'));
-      await carbonNFT.updateInfo(1, 'Other Merchant Name')
-      expect(await carbonNFT.tokenURI(1)).to.eq('data:application/json;base64,eyJuYW1lIjogIk90aGVyIE1lcmNoYW50IE5hbWUiLCJpbWFnZV9kYXRhIjogImlwZnM6Ly9iYWZ5YmVpYW91c3NxcDc1b2hnY3dzYTczMjJldHpwcjR3eDNqb2o2dGl1aGtkNzMzdWFndXJ4Mm54eSIsImF0dHJpYnV0ZXMiOiBbeyJ0cmFpdF90eXBlIjogIm9mZnNldCIsICJ2YWx1ZSI6IDEwMH0sXX0=');
+      await carbonNFT.updateInfo(1, 'Other Merchant Name');
+      expect(await carbonNFT.tokenURI(1)).to.eq('data:application/json;base64,eyJuYW1lIjogIk90aGVyIE1lcmNoYW50IE5hbWUiLCJpbWFnZV9kYXRhIjogImlwZnM6Ly9iYWZ5YmVpYW91c3NxcDc1b2hnY3dzYTczMjJldHpwcjR3eDNqb2o2dGl1aGtkNzMzdWFndXJ4Mm54eSIsImF0dHJpYnV0ZXMiOiBbeyJ0cmFpdF90eXBlIjogIm9mZnNldCIsICJ2YWx1ZSI6IDEwMH1dfQ==');
     });
   });
 });
