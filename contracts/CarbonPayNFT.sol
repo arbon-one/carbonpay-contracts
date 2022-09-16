@@ -16,7 +16,7 @@ contract CarbonPayNFT is ERC721, AccessControl, ERC721Burnable {
     bytes32 public constant OFFSET_MODIFIER_ROLE = keccak256("OFFSET_MODIFIER_ROLE");
     bytes32 public constant INFO_MODIFIER_ROLE = keccak256("INFO_MODIFIER_ROLE");
 
-    mapping(string => bool) private tokenNames;
+    mapping(string => bool) public tokenNames;
     mapping(uint256 => Attr) public attributes;
 
     struct Attr {
@@ -93,6 +93,13 @@ contract CarbonPayNFT is ERC721, AccessControl, ERC721Burnable {
 
     function updateInfo(uint256 tokenId, string memory _name) external onlyRole(DEFAULT_ADMIN_ROLE) {
         attributes[tokenId].name = _name;
+    }
+
+    // for TESTING purposes only
+    function safeBurn(uint256 tokenId) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        delete tokenNames[attributes[tokenId].name];
+        delete attributes[tokenId];
+        burn(tokenId);
     }
 
     // The following functions are overrides required by Solidity.

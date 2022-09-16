@@ -92,5 +92,23 @@ describe('CarbonNFT', function () {
       await carbonNFT.updateInfo(1, 'Other Merchant Name');
       expect(await carbonNFT.tokenURI(1)).to.eq('data:application/json;base64,eyJuYW1lIjogIk90aGVyIE1lcmNoYW50IE5hbWUiLCJpbWFnZV9kYXRhIjogImlwZnM6Ly9iYWZ5YmVpYW91c3NxcDc1b2hnY3dzYTczMjJldHpwcjR3eDNqb2o2dGl1aGtkNzMzdWFndXJ4Mm54eSIsImF0dHJpYnV0ZXMiOiBbeyJ0cmFpdF90eXBlIjogIm9mZnNldCIsICJ2YWx1ZSI6IDEwMH1dfQ==');
     });
+
+    it('Should return a correct name by given id or address', async function () {
+      const { carbonNFT, owner} = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, 'Merchant Name 1');
+      const name = (await carbonNFT.attributes(1)).name;
+      expect(name).to.be.eq('Merchant Name 1');
+      expect(await carbonNFT.tokenNames(name)).to.be.true;
+    });    
+  });
+
+  describe('Burn', function () {
+    it('Should burn the given token and update attributes and taken names', async function () {
+      const { carbonNFT, owner} = await loadFixture(deployFixture);
+      await carbonNFT.safeMint(owner.address, 'Merchant Name 1');
+      await carbonNFT.burn(1);
+      expect((await carbonNFT.attributes(1)).name).to.be.reverted;
+      expect((await carbonNFT.tokenNames(carbonNFT.attributes(1)).name)).to.be.reverted;
+    });
   });
 });

@@ -47,16 +47,4 @@ describe('CarbonNFT', function () {
       await expect(pay.connect(otherAccount).removeTokenFromAllowList(token.address)).to.be.reverted;
     });
   });
-
-  describe('Pay', function () {
-    it('Should burn tokens and update offset on NFT correctly', async function () {
-      const { pay, token, nft, owner } = await loadFixture(deployFixture);
-      await pay.addTokenToAllowlist(token.address);
-      await nft.grantRole(ethers.utils.keccak256(ethers.utils.toUtf8Bytes('OFFSET_MODIFIER_ROLE')), pay.address);
-      await nft.safeMint(owner.address, 'Merchant Name');
-      await pay.pay(owner.address, token.address, ethers.utils.parseEther('100'));
-      expect(await token.balanceOf(owner.address)).to.be.equal(0);
-      expect((await nft.attributes(1)).offset).to.eq(100);
-    });
-  });
 });
