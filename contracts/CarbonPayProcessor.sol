@@ -38,10 +38,10 @@ contract CarbonPayProcessor is AccessControl {
         INFT(nftContractAddress).updateOffset(merchant, offset);
     }
 
-    function pay(address merchant, address token, uint256 amount) public payable {
+    function pay(address merchant, address token, uint256 orderId, uint256 amount) public payable {
         require(allowedTokens[token], "Token is not allowed.");
 
         IToken(token).burn(merchant, amount);
-        updateOffset(merchant, amount);
+        updateOffset(merchant, amount, orderId);
     }
 }
